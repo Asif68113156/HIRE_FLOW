@@ -113,6 +113,30 @@ def create_seed_data():
         add_history(c12.id, "Applied", "Screening", now - timedelta(days=3))
         add_history(c12.id, "Screening", "Interview", two_hours_ago)
 
+        # Demo: "Screening > 7 days" query
+        d1 = Candidate(name="Zara Sheikh", email="zara@example.com", phone="555-0201", role="Cloud Architect", resume_url=sample_pdf, notes="Pending technical panel availability for deep cloud assessment.", current_stage="Screening", created_at=now - timedelta(days=20))
+        db.session.add(d1)
+        db.session.flush()
+        add_history(d1.id, None, "Applied", d1.created_at)
+        add_history(d1.id, "Applied", "Screening", now - timedelta(days=18))
+
+        # Demo: "Offer but not Hired" query
+        d2 = Candidate(name="Nikhil Bose", email="nikhil@example.com", phone="555-0202", role="ML Engineer", resume_url=sample_pdf, notes="Offer extended. Candidate requested 2 week decision window.", current_stage="Offer", created_at=now - timedelta(days=18))
+        db.session.add(d2)
+        db.session.flush()
+        add_history(d2.id, None, "Applied", d2.created_at)
+        add_history(d2.id, "Applied", "Screening", now - timedelta(days=15))
+        add_history(d2.id, "Screening", "Interview", now - timedelta(days=10))
+        add_history(d2.id, "Interview", "Offer", now - timedelta(days=3))
+
+        # Demo: "Monday" / "Interview candidates since Monday" query
+        d3 = Candidate(name="Divya Nair", email="divya@example.com", phone="555-0203", role="Full Stack Developer", resume_url=sample_pdf, notes="Strong technical round performance. Moved to interview this week.", current_stage="Interview", created_at=now - timedelta(days=10))
+        db.session.add(d3)
+        db.session.flush()
+        add_history(d3.id, None, "Applied", d3.created_at)
+        add_history(d3.id, "Applied", "Screening", now - timedelta(days=7))
+        add_history(d3.id, "Screening", "Interview", last_monday)
+
         db.session.commit()
         print("Database seeded with candidates!")
 
