@@ -1,0 +1,15 @@
+# Python & Virtual Environment
+venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# Database & SQLite
+*.db
+*.sqlite3
+
+# Flask & IDE Uploads
+instance/
+.pytest_cache/
+.vscode/
+.idea/

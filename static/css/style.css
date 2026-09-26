@@ -1,0 +1,125 @@
+/* Premium Custom Variables */
+:root {
+  --color-premium: #1a1e29;
+  --color-premium-light: #2c3345;
+  --color-glass: rgba(255, 255, 255, 0.85);
+  --color-primary: #4361ee;
+  --color-primary-hover: #3a56d4;
+  --color-accent: #f72585;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #f8f9fa;
+  color: #1a1e29;
+}
+
+/* Typography Enhancements */
+.ls-wide { letter-spacing: 1.5px; }
+
+/* Custom Backgrounds & Gradients */
+.bg-premium {
+  background-color: var(--color-premium) !important;
+  background-image: linear-gradient(135deg, var(--color-premium) 0%, #000000 100%);
+}
+.bg-primary { background-color: var(--color-primary) !important; }
+.text-primary { color: var(--color-primary) !important; }
+.btn-primary { 
+    background-color: var(--color-primary); 
+    border-color: var(--color-primary); 
+}
+.btn-primary:hover {
+    background-color: var(--color-primary-hover);
+    border-color: var(--color-primary-hover);
+}
+
+.text-premium { color: var(--color-premium) !important; }
+
+/* Dashboard Columns */
+.pipeline-board {
+  padding-right: 15px; /* space for scrolling */
+}
+.pipeline-column {
+  min-width: 320px;
+  background: transparent;
+}
+.column-dropzone {
+  min-height: 100px;
+}
+
+/* Glassmorphism */
+.bg-glass {
+  background: var(--color-glass);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+.search-glass {
+  background: rgba(255,255,255,0.1);
+  border-radius: 50px;
+  backdrop-filter: blur(5px);
+  border: 1px solid rgba(255,255,255,0.15);
+  transition: all 0.3s ease;
+}
+.search-glass:focus-within {
+  background: rgba(255,255,255,0.2);
+  border-color: rgba(255,255,255,0.3);
+  box-shadow: 0 0 15px rgba(67, 97, 238, 0.4);
+}
+.search-glass input::placeholder {
+  color: rgba(255,255,255,0.6);
+}
+
+/* Cards & Hover States */
+.candidate-card {
+  transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s ease;
+  cursor: pointer;
+  border-left: 4px solid transparent !important;
+}
+.candidate-card:hover, .hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 .5rem 1rem rgba(0,0,0,.15) !important;
+}
+
+/* Stage Specific Styling */
+.bg-primary-subtle { background-color: rgba(67, 97, 238, 0.1) !important; }
+.bg-info-subtle { background-color: rgba(76, 201, 240, 0.1) !important; border-left-color: #4cc9f0; }
+.bg-warning-subtle { background-color: rgba(250, 163, 7, 0.1) !important; border-left-color: #faa307; }
+.bg-purple-subtle { background-color: rgba(114, 9, 183, 0.1) !important; border-left-color: #7209b7; }
+.text-purple { color: #7209b7 !important; }
+.bg-success-subtle { background-color: rgba(56, 176, 0, 0.1) !important; border-left-color: #38b000; }
+
+.pipeline-column:nth-child(2) .candidate-card:hover { border-left-color: #4cc9f0 !important; }
+.pipeline-column:nth-child(3) .candidate-card:hover { border-left-color: #faa307 !important; }
+.pipeline-column:nth-child(4) .candidate-card:hover { border-left-color: #7209b7 !important; }
+.pipeline-column:nth-child(5) .candidate-card:hover { border-left-color: #38b000 !important; }
+.pipeline-column:nth-child(6) .candidate-card:hover { border-left-color: #dc3545 !important; }
+
+/* Timeline */
+.timeline {
+  border-left-width: 0 !important;
+}
+.timeline-dot {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Scrollbar styling for pipeline board */
+.pipeline-board::-webkit-scrollbar {
+  height: 8px;
+}
+.pipeline-board::-webkit-scrollbar-track {
+  background: rgba(0,0,0,0.02);
+  border-radius: 4px;
+}
+.pipeline-board::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 4px;
+}
+.pipeline-board::-webkit-scrollbar-thumb:hover {
+  background: #9ca3af;
+}
+
+/* Global Transition classes */
+.transition-all {
+  transition: all 0.3s ease;
+}

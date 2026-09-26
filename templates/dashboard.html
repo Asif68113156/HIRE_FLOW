@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Dashboard Header -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h1 class="h3 fw-bold text-dark mb-1">Recruiter Dashboard</h1>
+        <p class="text-muted mb-0">Active Job: <span class="fw-semibold text-dark">Senior Software Engineer</span> &bull; Candidate Pipeline</p>
+    </div>
+    
+    <div class="d-flex align-items-center gap-2">
+        <button class="btn btn-outline-secondary btn-sm rounded-pill px-3" type="button" data-bs-toggle="offcanvas" data-bs-target="#activityLog">
+            <i class="bi bi-clock-history me-1"></i> Recent Activity
+        </button>
+    </div>
+</div>
+
+<!-- Pipeline Kanban Board -->
+<div class="row flex-nowrap overflow-auto pipeline-board pb-4" style="min-height: 600px;">
+    {% for stage, stage_candidates in pipeline.items() %}
+    <div class="col-12 col-md-4 col-lg-3 col-xl-2 pipeline-column">
+        <!-- Column Header -->
+        <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
+            <h6 class="fw-bold text-uppercase mb-0 text-muted small ls-wide d-flex align-items-center">
+                {% if stage == 'Applied' %}<i class="bi bi-inbox text-primary me-2 fs-6"></i>{% endif %}
+                {% if stage == 'Screening' %}<i class="bi bi-funnel text-info me-2 fs-6"></i>{% endif %}
+                {% if stage == 'Interview' %}<i class="bi bi-chat-left-text text-warning me-2 fs-6"></i>{% endif %}
+                {% if stage == 'Offer' %}<i class="bi bi-award text-purple me-2 fs-6"></i>{% endif %}
+                {% if stage == 'Hired' %}<i class="bi bi-check-circle text-success me-2 fs-6"></i>{% endif %}
+                {% if stage == 'Rejected' %}<i class="bi bi-x-circle text-danger me-2 fs-6"></i>{% endif %}
+                {{ stage }}
+            </h6>
+            <span class="badge rounded-pill bg-white text-dark shadow-sm border px-2 py-1 fw-bold">
+                {{ stage_candidates | length }}
+            </span>
+        </div>
+
+        <!-- Candidate Cards Container -->
+        <div class="column-dropzone d-flex flex-column gap-3">
+            {% for candidate in stage_candidates %}
+            <div class="card candidate-card border-0 shadow-sm rounded-3">
+                <a href="{{ url_for('candidates.candidate_detail', candidate_id=candidate.id) }}" class="card-body text-decoration-none text-dark p-3">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        <h6 class="fw-bold mb-0 text-dark">{{ candidate.name }}</h6>
+                        <span class="badge bg-light text-muted fw-normal" style="font-size: 0.7rem;">#{{ candidate.id }}</span>
+                    </div>
+                    
+                    <p class="text-muted small mb-2"><i class="bi bi-briefcase me-1"></i> {{ candidate.role }}</p>
+
+                    <div class="d-flex align-items-center justify-content-between pt-2 border-top">
+                        <small class="text-muted" style="font-size: 0.75rem;">
+                            <i class="bi bi-calendar3 me-1"></i> {{ candidate.created_at.strftime('%b %d') }}
+                        </small>
+                        <span class="text-primary small fw-medium">View details <i class="bi bi-chevron-right small"></i></span>
+                    </div>
+                </a>
+            </div>
+            {% else %}
+            <!-- Empty State -->
+            <div class="text-center p-4 border rounded-3 bg-white text-muted">
+                <i class="bi bi-inbox fs-4 d-block mb-1 opacity-50"></i>
+                <small>No candidates</small>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<!-- Offcanvas Recent Activity Log -->
+<div class="offcanvas offcanvas-end border-0 shadow" tabindex="-1" id="activityLog" style="width: 400px;">
+  <div class="offcanvas-header bg-premium text-white p-4">
+    <h5 class="offcanvas-title fw-bold fs-5"><i class="bi bi-clock-history me-2"></i> Audit Activity Log</h5>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
+  </div>
+  <div class="offcanvas-body p-4 bg-light">
+    <div class="timeline position-relative ps-3 ms-2">
+        {% for activity in recent_activity %}
+        <div class="timeline-item position-relative pb-4">
+            <span class="timeline-dot position-absolute bg-primary rounded-circle" style="left: -22px; top: 4px; width: 10px; height: 10px;"></span>
+            <div class="bg-white p-3 rounded-3 shadow-sm border">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <span class="fw-bold text-dark fs-6">{{ activity.candidate.name }}</span>
+                    <small class="text-muted" style="font-size: 0.7rem;">
+                        {{ activity.timestamp.strftime('%b %d, %H:%M') }}
+                    </small>
+                </div>
+                <div class="small text-muted">
+                    {% if activity.from_stage %}
+                        Moved from <span class="fw-bold">{{ activity.from_stage }}</span> to <span class="fw-bold text-primary">{{ activity.to_stage }}</span>
+                    {% else %}
+                        Added to pipeline (<span class="fw-bold text-primary">{{ activity.to_stage }}</span>)
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <p class="text-muted small text-center py-4">No recent activity.</p>
+        {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

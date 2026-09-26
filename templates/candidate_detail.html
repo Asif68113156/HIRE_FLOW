@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row gx-5">
+    <div class="col-lg-8">
+        <!-- Candidate Header -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <a href="{{ url_for('candidates.dashboard') }}" class="btn btn-light btn-sm rounded-pill fw-medium px-3 text-muted">
+                <i class="bi bi-arrow-left me-1"></i> Back to Pipeline
+            </a>
+            <span class="badge bg-secondary rounded-pill px-3 py-2 fw-medium">
+                ID: {{ candidate.id }}
+            </span>
+        </div>
+
+        <div class="card border-0 shadow-sm rounded-4 mb-4">
+            <div class="card-body p-5">
+                <div class="row">
+                    <div class="col-md-8">
+                        <h1 class="display-6 fw-bold text-dark mb-1">{{ candidate.name }}</h1>
+                        <p class="text-primary fs-5 fw-medium mb-4">{{ candidate.role }}</p>
+                        
+                        <div class="row g-4 mt-2">
+                            <div class="col-sm-6">
+                                <div class="d-flex align-items-center text-muted">
+                                    <div class="bg-light rounded-circle p-2 me-3">
+                                        <i class="bi bi-envelope fs-5 text-dark"></i>
+                                    </div>
+                                    <div>
+                                        <div class="small fw-bold text-uppercase ls-wide">Email</div>
+                                        <div><a href="mailto:{{ candidate.email }}" class="text-decoration-none text-dark">{{ candidate.email }}</a></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-sm-6">
+                                <div class="d-flex align-items-center text-muted">
+                                    <div class="bg-light rounded-circle p-2 me-3">
+                                        <i class="bi bi-telephone fs-5 text-dark"></i>
+                                    </div>
+                                    <div>
+                                        <div class="small fw-bold text-uppercase ls-wide">Phone</div>
+                                        <div>{{ candidate.phone }}</div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% if candidate.resume_url %}
+                            <div class="col-sm-6">
+                                <div class="d-flex align-items-center text-muted">
+                                    <div class="bg-light rounded-circle p-2 me-3">
+                                        <i class="bi bi-file-earmark-person fs-5 text-dark"></i>
+                                    </div>
+                                    <div>
+                                        <div class="small fw-bold text-uppercase ls-wide">Resume</div>
+                                        <div><a href="{{ candidate.resume_url }}" target="_blank" class="text-primary text-decoration-none fw-medium">View Resume PDF <i class="bi bi-file-earmark-pdf-fill ms-1 text-danger"></i></a></div>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            {% if candidate.notes %}
+            <div class="card-footer bg-light border-0 p-4 rounded-bottom-4">
+                <h6 class="fw-bold mb-2 text-dark"><i class="bi bi-journal-text me-2"></i> Notes</h6>
+                <p class="mb-0 text-muted">{{ candidate.notes }}</p>
+            </div>
+            {% endif %}
+        </div>
+        
+        <!-- Action Board (Change Stage) -->
+        <div class="card border-0 shadow-sm rounded-4 mb-4">
+            <div class="card-body p-5">
+                <h5 class="fw-bold mb-4">Manage Candidate Stage</h5>
+                
+                <form action="{{ url_for('candidates.change_stage', candidate_id=candidate.id) }}" method="POST">
+                    <div class="row align-items-end g-3">
+                        <div class="col-md-8">
+                            <label class="form-label text-muted fw-bold small text-uppercase ls-wide">Move to Stage</label>
+                            <select name="next_stage" class="form-select form-select-lg bg-light border-0 fw-medium">
+                                <option value="" disabled selected>Select next stage...</option>
+                                <option value="Screening" {% if candidate.current_stage != 'Applied' %}disabled{% endif %}>Screening</option>
+                                <option value="Interview" {% if candidate.current_stage != 'Screening' %}disabled{% endif %}>Interview</option>
+                                <option value="Offer" {% if candidate.current_stage != 'Interview' %}disabled{% endif %}>Offer</option>
+                                <option value="Hired" {% if candidate.current_stage != 'Offer' %}disabled{% endif %}>Hired</option>
+                                <option value="Rejected" {% if candidate.current_stage in ['Hired', 'Rejected'] %}disabled{% endif %} class="text-danger">Rejected</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-primary btn-lg w-100 fw-bold rounded-3">Execute Move</button>
+                        </div>
+                    </div>
+                    {% if candidate.current_stage in ['Hired', 'Rejected'] %}
+                    <div class="mt-3 text-muted small"><i class="bi bi-info-circle me-1"></i> This candidate is in a terminal stage and cannot be moved further.</div>
+                    {% endif %}
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Column: Status & Timeline -->
+    <div class="col-lg-4">
+        
+        <!-- Current Status Mini-Card -->
+        <div class="card border-0 shadow-sm rounded-4 mb-4 bg-primary text-white overflow-hidden position-relative">
+            <div class="position-absolute end-0 top-0 p-3 opacity-25">
+                <i class="bi bi-lightning-charge-fill display-1"></i>
+            </div>
+            <div class="card-body p-4 position-relative z-1">
+                <div class="text-white-50 text-uppercase ls-wide small fw-bold mb-1">Current Stage</div>
+                <h3 class="fw-bold mb-4">{{ candidate.current_stage }}</h3>
+                
+                <div class="text-white-50 text-uppercase ls-wide small fw-bold mb-1">Time in Stage</div>
+                <div class="d-flex align-items-center">
+                    <i class="bi bi-stopwatch me-2 fs-5"></i>
+                    <span class="fs-5 fw-medium">{{ duration }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Immutable Audit Trail -->
+        <div class="card border-0 shadow-sm rounded-4 h-100">
+            <div class="card-body p-4">
+                <h5 class="fw-bold mb-4 d-flex align-items-center">
+                    <i class="bi bi-clock-history text-primary me-2"></i> Audit Trail
+                </h5>
+                
+                <div class="timeline position-relative ps-4 ms-2">
+                    {% for p in history %}
+                    <div class="timeline-item position-relative pb-4">
+                        <span class="timeline-dot position-absolute bg-white border border-3 border-primary rounded-circle" style="left: -33px; top: 0; width: 16px; height: 16px; z-index: 2;"></span>
+                        {% if not loop.last %}
+                        <div class="timeline-line position-absolute bg-light h-100" style="left: -26px; top: 16px; width: 2px; z-index: 1;"></div>
+                        {% endif %}
+                        <div class="mb-1 d-flex justify-content-between align-items-center">
+                            <span class="badge bg-light text-dark fw-bold border">{{ p.to_stage }}</span>
+                            <small class="text-muted fw-medium">{{ p.timestamp.strftime('%d %b %Y, %H:%M') }}</small>
+                        </div>
+                        <div class="small text-muted mt-2 bg-light p-2 rounded-3 border-0">
+                            {% if p.from_stage %}
+                                Moved from <span class="fw-bold text-dark">{{ p.from_stage }}</span> via {{ p.actor }}
+                            {% else %}
+                                Application submitted
+                            {% endif %}
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
+{% endblock %}
