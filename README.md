@@ -3,6 +3,12 @@
 ## Overview 
 Mini Hiring Pipeline is a production-ready, SaaS-like web application designed for recruiters to efficiently manage a candidate pipeline for a single job opening. The application demonstrates complex backend logic, including strict sequence validations, an immutable audit trail, and a powerful natural language search engine powered by fuzzy string matching.
 
+## 📸 Portal Screenshot
+
+![Recruiter Dashboard](static/images/image.png)
+
+---
+
 ## Features
 - **Strict Pipeline Sequencing**: Candidates move through an allowed flow (`Applied → Screening → Interview → Offer → Hired`) and invalid transitions (e.g., `Applied → Interview` or moving backwards) are blocked securely on the server side.
 - **Immutable Audit Trail**: Every stage change generates an uneditable history log.
